@@ -6,6 +6,7 @@ let totalExpenditure = 0;
 let transactionList = [];
 let selectedDate = new Date();
 let currentViewDate = new Date(); // 달력 표시용
+let currentReportType = 'DAILY'; // DAILY | WEEKLY | MONTHLY
 
 // 모달 내부 입력 임시 상태
 let modalTransactionType = 'EXPENDITURE'; // EXPENDITURE | INCOME
@@ -147,13 +148,25 @@ function renderRecentList() {
     const listContainer = document.getElementById('home-recent-list');
     listContainer.innerHTML = '';
 
+    const filterVal = document.getElementById('home-tx-filter') ? document.getElementById('home-tx-filter').value : 'ALL';
+    let filtered = [...transactionList];
+
+    if (filterVal === 'OVERSPEND') {
+        filtered = filtered.filter(tx => tx.transactionType === 'EXPENDITURE' && tx.amount >= 30000);
+    } else if (filterVal === 'INCOME') {
+        filtered = filtered.filter(tx => tx.transactionType === 'INCOME');
+    } else if (filterVal.startsWith('CAT_')) {
+        const categoryName = filterVal.replace('CAT_', '');
+        filtered = filtered.filter(tx => tx.category === categoryName);
+    }
+
     // 최근 거래순 정렬 후 5개 추출
-    const recent = [...transactionList]
+    const recent = filtered
         .sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate))
         .slice(0, 5);
 
     if (recent.length === 0) {
-        listContainer.innerHTML = '<div class="empty-state">내역이 없습니다. 우측 하단 + 버튼으로 등록해보세요!</div>';
+        listContainer.innerHTML = '<div class="empty-state">해당하는 소비 내역이 없습니다.</div>';
         return;
     }
 
@@ -182,6 +195,10 @@ function renderRecentList() {
         `;
         listContainer.insertAdjacentHTML('beforeend', html);
     });
+}
+
+function filterHomeTransactions() {
+    renderRecentList();
 }
 
 // 탭 전환 기능
@@ -603,7 +620,7 @@ async function submitTransaction() {
 // 이미 저장되어 있는 AI 리포트가 있으면 최초 로드
 async function fetchReportHistory() {
     try {
-        const res = await fetch(`/api/v1/ai-reports?userId=${USER_ID}`);
+        const res = await fetch(`/api/v1/ai-reports?userId=${USER_ID}&reportType=${currentReportType}`);
         if (res.ok) {
             const reports = await res.json();
             if (reports.length > 0) {
@@ -632,7 +649,7 @@ async function triggerAiReport() {
     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
     try {
-        const res = await fetch(`/api/v1/ai-reports/generate?userId=${USER_ID}&reportDate=${dateStr}`, {
+        const res = await fetch(`/api/v1/ai-reports/generate?userId=${USER_ID}&reportDate=${dateStr}&reportType=${currentReportType}`, {
             method: 'POST'
         });
         if (res.ok) {
@@ -680,7 +697,9 @@ function renderAiReportContent(report) {
     }
     
     thinking.textContent = thinkingFlow;
-    content.textContent = mainReport;
+    
+    // 마크다운 파서를 적용하여 렌더링
+    content.innerHTML = parseMarkdown(mainReport);
 
     // 3. 해시태그 동적 추출 파싱
     chips.innerHTML = '';
@@ -704,6 +723,55 @@ function renderAiReportContent(report) {
     foundTags.forEach(tag => {
         chips.insertAdjacentHTML('beforeend', `<span class="chip font-tag">${tag}</span>`);
     });
+}
+
+// 리포트 단위 선택 전환
+function switchReportType(type) {
+    currentReportType = type;
+
+    // 탭 버튼 스위칭
+    document.querySelectorAll('.report-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`rep-tab-${type}`).classList.add('active');
+
+    // 문구 및 설명 갱신
+    const desc = document.getElementById('report-description');
+    const btnText = document.getElementById('btn-generate-text');
+
+    const config = {
+        'DAILY': { desc: 'NVIDIA NIM AI가 금일 하루 지출을 분석합니다.', btn: '일간 리포트 생성 / 갱신' },
+        'WEEKLY': { desc: 'NVIDIA NIM AI가 지난 7일 동안의 지출 패턴을 분석합니다.', btn: '주간 리포트 생성 / 갱신' },
+        'MONTHLY': { desc: 'NVIDIA NIM AI가 당월 한 달 동안의 예산 대비 소비를 분석합니다.', btn: '월간 리포트 생성 / 갱신' }
+    };
+
+    desc.textContent = config[type].desc;
+    btnText.textContent = config[type].btn;
+
+    // 해당 타입의 기존 코칭 내역 로딩
+    fetchReportHistory();
+}
+
+// 심플 마크다운 파서 헬퍼
+function parseMarkdown(text) {
+    if (!text) return "";
+    let html = text;
+
+    // 1. ### 제목 파싱
+    html = html.replace(/^###\s+(.*)$/gm, '<h4>$1</h4>');
+    html = html.replace(/###\s+(.*)/g, '<h4>$1</h4>');
+    
+    // 2. **볼드** 파싱
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // 3. 목록 대시 - 파싱
+    html = html.replace(/^\s*-\s+(.*)$/gm, '<li>• $1</li>');
+
+    // 4. 줄바꿈 처리 (\n)
+    html = html.replace(/\n/g, '<br>');
+
+    // 5. 불필요 개행 정리
+    html = html.replace(/<br><br>/g, '<br>');
+
+    return html;
 }
 
 // 생각 접기/펼치기

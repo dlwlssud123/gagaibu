@@ -29,10 +29,15 @@ public class AiReport {
     @Column(nullable = false)
     private LocalDate reportDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "report_type", nullable = false)
+    private AiReportType reportType;
+
     @Builder
-    public AiReport(User user, String content, LocalDate reportDate) {
+    public AiReport(User user, String content, LocalDate reportDate, AiReportType reportType) {
         this.user = user;
         this.content = content;
         this.reportDate = reportDate;
+        this.reportType = reportType;
     }
 }

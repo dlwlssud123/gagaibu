@@ -1042,3 +1042,55 @@ body {
 .submit-transaction-btn {
     margin-top: 10px;
 }
+
+/* 홈 탭 필터 스타일 */
+.filter-wrapper {
+    margin-left: auto;
+    margin-right: 8px;
+}
+
+#home-tx-filter {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #495057;
+    background-color: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+
+#home-tx-filter:focus {
+    border-color: #10b981;
+}
+
+/* AI 리포트 주기선택 탭바 스타일 */
+.report-type-tabs {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 8px;
+}
+
+.report-tab-btn {
+    flex: 1;
+    border: none;
+    background-color: transparent;
+    padding: 8px 0;
+    border-radius: 9px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #868e96;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+    text-align: center;
+}
+
+.report-tab-btn.active {
+    background-color: #ffffff;
+    color: #10b981;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+

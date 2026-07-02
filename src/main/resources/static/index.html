@@ -76,7 +76,17 @@
 
                     <!-- 최근 소비 내역 섹션 -->
                     <div class="section-header">
-                        <h3>최근 소비 내역</h3>
+                        <h3>소비 내역</h3>
+                        <div class="filter-wrapper">
+                            <select id="home-tx-filter" onchange="filterHomeTransactions()">
+                                <option value="ALL">전체 내역</option>
+                                <option value="OVERSPEND">과소비 (3만원↑)</option>
+                                <option value="INCOME">수입만</option>
+                                <option value="CAT_식비">식비만</option>
+                                <option value="CAT_카페">카페만</option>
+                                <option value="CAT_쇼핑">쇼핑만</option>
+                            </select>
+                        </div>
                         <span class="see-all" onclick="switchTab('history')">더보기 <i class="fa-solid fa-chevron-right"></i></span>
                     </div>
                     <div class="recent-list" id="home-recent-list">
@@ -118,10 +128,17 @@
 
                 <!-- 3. AI 저축 코칭 리포트 탭 -->
                 <section id="tab-report" class="tab-content">
+                    <!-- 리포트 주기 선택 탭 바 -->
+                    <div class="report-type-tabs">
+                        <button class="report-tab-btn active" id="rep-tab-DAILY" onclick="switchReportType('DAILY')">일간</button>
+                        <button class="report-tab-btn" id="rep-tab-WEEKLY" onclick="switchReportType('WEEKLY')">주간</button>
+                        <button class="report-tab-btn" id="rep-tab-MONTHLY" onclick="switchReportType('MONTHLY')">월간</button>
+                    </div>
+
                     <div class="report-generator-box">
-                        <p>NVIDIA NIM AI가 이번 달 소비 유형을 분석합니다.</p>
+                        <p id="report-description">NVIDIA NIM AI가 금일 하루 지출을 분석합니다.</p>
                         <button class="btn btn-primary" id="btn-generate-report" onclick="triggerAiReport()">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 리포트 생성 / 갱신
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> <span id="btn-generate-text">일간 리포트 생성 / 갱신</span>
                         </button>
                     </div>
 
