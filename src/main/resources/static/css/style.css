@@ -1094,3 +1094,21 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.06);
 }
 
+/* 모달 날짜 입력창 스타일 */
+.date-input-box input {
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #495057;
+    outline: none;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.date-input-box input:focus {
+    border-color: #10b981;
+}
+
+

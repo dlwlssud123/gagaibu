@@ -470,6 +470,13 @@ function openInputModal() {
     modalAsset = '신용카드';
     document.getElementById('modal-input-content').value = '';
     
+    // 거래 날짜 기본값을 현재 선택된 날짜로 지정
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1;
+    const day = selectedDate.getDate();
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    document.getElementById('modal-input-date').value = dateStr;
+    
     // UI 초기 렌더링
     updateModalUI();
     renderCategoryChips();
@@ -582,11 +589,8 @@ async function submitTransaction() {
     const inputContent = document.getElementById('modal-input-content').value.trim();
     const finalContent = inputContent !== "" ? inputContent : `${modalCategory} 지출`;
 
-    // 선택된 날짜 문자열 전송 (히스토리에서 고른 날짜 또는 오늘 날짜 연계)
-    const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth() + 1;
-    const day = selectedDate.getDate();
-    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    // 모달에 입력된 날짜 값을 가져옴
+    const dateStr = document.getElementById('modal-input-date').value;
 
     const body = {
         userId: USER_ID,
@@ -605,6 +609,20 @@ async function submitTransaction() {
         });
         if (res.ok) {
             closeInputModal();
+            
+            // 등록 완료 시, 등록한 날짜로 화면의 활성 날짜 갱신
+            const parsedDate = new Date(dateStr);
+            if (!isNaN(parsedDate.getTime())) {
+                selectedDate = parsedDate;
+                currentViewDate = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), 1);
+                
+                // 히스토리 월 텍스트 동기화
+                const histMonthText = document.getElementById('history-month-text');
+                if (histMonthText) {
+                    histMonthText.textContent = `${parsedDate.getFullYear()}년 ${parsedDate.getMonth() + 1}월`;
+                }
+            }
+
             // 화면 목록 최신 갱신
             await fetchTransactions();
         }
