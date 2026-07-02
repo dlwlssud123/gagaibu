@@ -8,6 +8,9 @@ spring:
     driver-class-name: oracle.jdbc.OracleDriver
     username: ${DB_USERNAME:system}
     password: ${DB_PASSWORD}
+    hikari:
+      data-source-properties:
+        internal_logon: ${DB_INTERNAL_LOGON:}
 
   jpa:
     hibernate:
