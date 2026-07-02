@@ -1,0 +1,1044 @@
+/* 기본 리셋 및 글로벌 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #f1f3f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 0;
+}
+
+/* 모바일 디바이스 프레임 */
+.device-frame {
+    width: 390px;
+    height: 844px;
+    background-color: #ffffff;
+    border-radius: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 8px solid #2b2b2b;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 상단 상태 표시줄 모형 */
+.status-bar {
+    height: 38px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2b2b2b;
+    z-index: 10;
+}
+
+.status-bar .icons {
+    display: flex;
+    gap: 6px;
+    font-size: 11px;
+}
+
+/* 앱 내부 컨테이너 */
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: calc(100% - 38px);
+}
+
+/* 앱 상단 헤더 */
+.app-header {
+    height: 56px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.app-header h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.app-header .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 18px;
+    color: #495057;
+}
+
+.badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
+
+/* 메인 콘텐츠 스크롤 영역 */
+.app-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background-color: #fafafa;
+    padding-bottom: 90px; /* FAB와 탭바 공간 */
+}
+
+/* 스크롤바 숨기기 */
+.app-body::-webkit-scrollbar {
+    display: none;
+}
+
+/* 탭 전환 스타일 */
+.tab-content {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 카드 UI 공통 스타일 */
+.card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f3f5;
+}
+
+/* 1. 홈 탭 스타일 */
+.ai-banner {
+    background-color: #e8f5e9;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border: 1px solid #c8e6c9;
+}
+
+.ai-avatar {
+    width: 44px;
+    height: 44px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.ai-msg-box {
+    flex: 1;
+}
+
+.ai-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2e7d32;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.ai-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1b5e20;
+    line-height: 1.4;
+}
+
+.budget-card {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+}
+
+.budget-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.edit-budget-btn {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.budget-amount h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin: 10px 0;
+}
+
+.progress-container {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+.budget-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 10px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.section-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #212529;
+}
+
+.see-all {
+    font-size: 12px;
+    color: #868e96;
+    cursor: pointer;
+}
+
+.recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 거래내역 아이템 */
+.transaction-item {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.01);
+    border: 1px solid #f1f3f5;
+    transition: transform 0.2s;
+}
+
+.transaction-item:hover {
+    transform: scale(0.99);
+}
+
+.tx-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cat-icon-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+}
+
+.cat-icon-circle.expenditure {
+    background-color: #ffebee;
+    color: #ef4444;
+}
+
+.cat-icon-circle.income {
+    background-color: #e3f2fd;
+    color: #3b82f6;
+}
+
+.tx-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.tx-content {
+    font-size: 14px;
+    font-weight: 600;
+    color: #212529;
+}
+
+.tx-meta {
+    font-size: 11px;
+    color: #868e96;
+}
+
+.tx-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.tx-amount {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.tx-amount.expenditure {
+    color: #ef4444;
+}
+
+.tx-amount.income {
+    color: #3b82f6;
+}
+
+.delete-tx-btn {
+    font-size: 11px;
+    color: #adb5bd;
+    cursor: pointer;
+}
+
+.delete-tx-btn:hover {
+    color: #e03131;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #868e96;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 2. 히스토리 탭 스타일 */
+.month-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 12px 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.01);
+    border: 1px solid #f1f3f5;
+}
+
+.month-selector i {
+    cursor: pointer;
+    color: #495057;
+    padding: 4px 8px;
+}
+
+.current-month-text {
+    font-weight: 700;
+    font-size: 15px;
+    color: #212529;
+}
+
+.calendar-grid-card {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f3f5;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #868e96;
+    margin-bottom: 8px;
+}
+
+.calendar-weekdays span:first-child { color: #ef4444; }
+.calendar-weekdays span:last-child { color: #3b82f6; }
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 6px;
+}
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    position: relative;
+}
+
+.day-cell:hover {
+    background-color: #f1f3f5;
+}
+
+.day-cell.active {
+    background-color: #10b981;
+    color: #ffffff;
+}
+
+.day-cell.other-month {
+    color: #dee2e6;
+    pointer-events: none;
+}
+
+.day-cell .day-sum {
+    font-size: 8px;
+    font-weight: 700;
+    color: #ef4444;
+    position: absolute;
+    bottom: 2px;
+    width: 100%;
+    text-align: center;
+}
+
+.day-cell.active .day-sum {
+    color: #ffffff;
+}
+
+.timeline-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 700;
+    color: #495057;
+    border-left: 3px solid #10b981;
+    padding-left: 8px;
+}
+
+.day-total {
+    color: #ef4444;
+}
+
+.timeline-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 3. AI 리포트 탭 스타일 */
+.report-generator-box {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid #f1f3f5;
+}
+
+.report-generator-box p {
+    font-size: 13px;
+    color: #495057;
+    margin-bottom: 14px;
+}
+
+.btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: #10b981;
+    color: #ffffff;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background-color: #059669;
+}
+
+.btn-secondary {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.report-result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.report-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.report-tags .chip {
+    background-color: #e2e8f0;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.report-card {
+    border-left: 4px solid #10b981;
+}
+
+.report-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.report-card .card-title h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1b5e20;
+}
+
+.divider {
+    border: 0;
+    height: 1px;
+    background-color: #f1f3f5;
+    margin-bottom: 12px;
+}
+
+.report-body-text {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #2b2b2b;
+    white-space: pre-wrap;
+}
+
+.expansion-panel {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #f1f3f5;
+    overflow: hidden;
+}
+
+.expansion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #868e96;
+    cursor: pointer;
+    background-color: #fafafa;
+}
+
+.expansion-content {
+    padding: 14px;
+    border-top: 1px solid #f1f3f5;
+    background-color: #ffffff;
+}
+
+.expansion-content pre {
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 11px;
+    color: #495057;
+    line-height: 1.4;
+}
+
+.report-loading-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    gap: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f1f3f5;
+    border-top: 4px solid #10b981;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.report-loading-box p {
+    font-size: 12px;
+    color: #868e96;
+    line-height: 1.5;
+}
+
+/* 4. 설정 탭 스타일 */
+.setting-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 12px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.input-group label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #868e96;
+}
+
+.input-with-btn {
+    display: flex;
+    gap: 8px;
+}
+
+.input-with-btn input {
+    flex: 1;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.input-with-btn input:focus {
+    border-color: #10b981;
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #868e96;
+    margin-top: 10px;
+}
+
+.persona-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.persona-card {
+    background-color: #ffffff;
+    border-radius: 14px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 2px solid #f1f3f5;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.persona-card:hover {
+    background-color: #fafafa;
+}
+
+.persona-card.active {
+    border-color: #10b981;
+    background-color: #e8f5e9;
+}
+
+.persona-emoji {
+    font-size: 26px;
+}
+
+.persona-info h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 2px;
+}
+
+.persona-info p {
+    font-size: 11.5px;
+    color: #868e96;
+}
+
+.persona-card.active .persona-info p {
+    color: #2e7d32;
+}
+
+.check-indicator {
+    position: absolute;
+    right: 14px;
+    font-size: 18px;
+    color: #dee2e6;
+}
+
+.persona-card.active .check-indicator {
+    color: #10b981;
+}
+
+/* 하단 탭 바 */
+.bottom-nav {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 64px;
+    background-color: #ffffff;
+    border-top: 1px solid #f1f3f5;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    z-index: 5;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    color: #adb5bd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.nav-item i {
+    font-size: 18px;
+}
+
+.nav-item span {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.nav-item.active {
+    color: #10b981;
+}
+
+/* 플로팅 액션 버튼 (FAB) */
+.fab-btn {
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background-color: #10b981;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.fab-btn:active {
+    transform: scale(0.9);
+}
+
+/* 바텀시트 모달 스타일 */
+.bottom-sheet-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.bottom-sheet-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-height: 85%;
+    background-color: #ffffff;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 16px 20px 24px 20px;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+}
+
+.bottom-sheet-backdrop.active .bottom-sheet {
+    transform: translateY(0);
+}
+
+.sheet-handle {
+    width: 40px;
+    height: 4px;
+    background-color: #dee2e6;
+    border-radius: 2px;
+    margin: 0 auto;
+}
+
+.sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sheet-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #212529;
+}
+
+.sheet-header .close-btn {
+    font-size: 18px;
+    color: #adb5bd;
+    cursor: pointer;
+}
+
+/* 수입/지출 선택 */
+.transaction-type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: #f1f3f5;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.type-btn {
+    border: none;
+    padding: 8px 0;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #868e96;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.type-btn.active {
+    background-color: #ffffff;
+    color: #ef4444;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#type-btn-income.active {
+    color: #3b82f6;
+}
+
+/* 금액 노출창 */
+.amount-display-box {
+    background-color: #fafafa;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    border: 1px dashed #dee2e6;
+}
+
+.amount-display-box .unit {
+    font-size: 18px;
+    font-weight: 700;
+    color: #adb5bd;
+}
+
+.amount-display-box .amount-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: #ef4444;
+    letter-spacing: 0.5px;
+}
+
+#type-btn-income.active ~ .amount-display-box .amount-val {
+    color: #3b82f6;
+}
+
+.sheet-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #868e96;
+    margin-bottom: -4px;
+}
+
+/* 카테고리 칩 선택 그리드 */
+.category-chips-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.chip-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #495057;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.chip-item i {
+    font-size: 14px;
+}
+
+.chip-item.active {
+    background-color: #e8f5e9;
+    border-color: #10b981;
+    color: #2e7d32;
+}
+
+/* 메모 입력란 */
+.memo-input-box input {
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    outline: none;
+}
+
+.memo-input-box input:focus {
+    border-color: #10b981;
+}
+
+/* 결제 자산 선택 */
+.asset-selector-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.asset-btn {
+    border: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    transition: border-color 0.2s;
+}
+
+.asset-btn.active {
+    border-color: #10b981;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* 숫자 키패드 */
+.number-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.number-keypad button {
+    background-color: #f8f9fa;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #343a40;
+    cursor: pointer;
+}
+
+.number-keypad button:active {
+    background-color: #e9ecef;
+}
+
+.submit-transaction-btn {
+    margin-top: 10px;
+}

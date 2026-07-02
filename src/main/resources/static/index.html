@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가개부 (GaGaIBu) - AI 가계부 시뮬레이터</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- 디바이스 프레임 (모바일 앱 느낌 극대화) -->
+    <div class="device-frame">
+        
+        <!-- 상태 표시줄 모형 -->
+        <div class="status-bar">
+            <span class="time" id="device-time">17:30</span>
+            <div class="icons">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-three-quarters"></i>
+            </div>
+        </div>
+
+        <!-- 메인 콘텐츠 영역 (앱 바 및 탭 뷰) -->
+        <div class="app-container">
+            
+            <!-- 앱 상단 헤더 -->
+            <header class="app-header">
+                <h1 id="header-title">홈</h1>
+                <div class="header-actions">
+                    <span id="user-badge" class="badge">gagaibu_user</span>
+                    <i class="fa-regular fa-bell"></i>
+                </div>
+            </header>
+
+            <!-- 탭 콘텐츠 바디 -->
+            <main class="app-body">
+                
+                <!-- 1. 대시보드 / 메인 홈 탭 -->
+                <section id="tab-home" class="tab-content active">
+                    <!-- AI 실시간 잔소리 배너 -->
+                    <div class="ai-banner" id="ai-banner-card">
+                        <div class="ai-avatar">
+                            <span id="ai-avatar-emoji">👩‍👦</span>
+                        </div>
+                        <div class="ai-msg-box">
+                            <span class="ai-name" id="ai-persona-name">엄마</span>
+                            <p class="ai-text" id="ai-one-liner">"오늘도 돈 쓸 생각 하니? 예산 보고 정신 차려라!"</p>
+                        </div>
+                    </div>
+
+                    <!-- 이번 달 예산 요약 카드 -->
+                    <div class="card budget-card">
+                        <div class="budget-header">
+                            <span>이번 달 남은 예산</span>
+                            <span class="edit-budget-btn" onclick="switchTab('setting')"><i class="fa-solid fa-pen-to-square"></i> 설정</span>
+                        </div>
+                        <div class="budget-amount">
+                            <h2 id="home-remaining-budget">0원</h2>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="home-budget-progress" style="width: 0%;"></div>
+                        </div>
+                        <div class="budget-footer">
+                            <span>총 지출: <strong id="home-total-expenditure">0원</strong></span>
+                            <span>목표: <span id="home-target-budget">0원</span></span>
+                        </div>
+                    </div>
+
+                    <!-- 최근 소비 내역 섹션 -->
+                    <div class="section-header">
+                        <h3>최근 소비 내역</h3>
+                        <span class="see-all" onclick="switchTab('history')">더보기 <i class="fa-solid fa-chevron-right"></i></span>
+                    </div>
+                    <div class="recent-list" id="home-recent-list">
+                        <!-- JS에서 동적 추가 -->
+                        <div class="empty-state">내역이 없습니다. 우측 하단 + 버튼으로 등록해보세요!</div>
+                    </div>
+                </section>
+
+                <!-- 2. 캘린더 / 내역 탭 -->
+                <section id="tab-history" class="tab-content">
+                    <!-- 간이 월 선택 바 -->
+                    <div class="month-selector">
+                        <i class="fa-solid fa-chevron-left" onclick="changeMonth(-1)"></i>
+                        <span class="current-month-text" id="history-month-text">2026년 7월</span>
+                        <i class="fa-solid fa-chevron-right" onclick="changeMonth(1)"></i>
+                    </div>
+
+                    <!-- 캘린더 그리드 모형 -->
+                    <div class="calendar-grid-card">
+                        <div class="calendar-weekdays">
+                            <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+                        </div>
+                        <div class="calendar-days" id="calendar-days-container">
+                            <!-- JS에서 날짜 그리드 동적 생성 -->
+                        </div>
+                    </div>
+
+                    <!-- 선택 날짜 상세 타임라인 -->
+                    <div class="timeline-section">
+                        <div class="timeline-header">
+                            <span id="selected-date-label">오늘</span>
+                            <span class="day-total" id="selected-date-total">지출: 0원</span>
+                        </div>
+                        <div class="timeline-list" id="history-timeline-list">
+                            <!-- JS에서 동적 렌더링 -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. AI 저축 코칭 리포트 탭 -->
+                <section id="tab-report" class="tab-content">
+                    <div class="report-generator-box">
+                        <p>NVIDIA NIM AI가 이번 달 소비 유형을 분석합니다.</p>
+                        <button class="btn btn-primary" id="btn-generate-report" onclick="triggerAiReport()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> AI 리포트 생성 / 갱신
+                        </button>
+                    </div>
+
+                    <!-- AI 리포트 뷰 보드 -->
+                    <div class="report-result-container" id="report-view-container" style="display: none;">
+                        <!-- 태그 칩스 -->
+                        <div class="report-tags" id="report-chips">
+                            <span class="chip font-tag">#분석대기</span>
+                        </div>
+
+                        <!-- 메인 보고서 카드 -->
+                        <div class="card report-card">
+                            <div class="card-title">
+                                <span id="report-avatar-emoji">👩‍👦</span>
+                                <h4 id="report-persona-title">엄마의 AI 코칭 피드백</h4>
+                            </div>
+                            <hr class="divider">
+                            <div class="report-body-text" id="report-content-text">
+                                리포트가 생성되지 않았습니다. 위의 생성 버튼을 눌러주세요.
+                            </div>
+                        </div>
+
+                        <!-- AI 생각 알고리즘 흐름 (Expansion Panel 모형) -->
+                        <div class="expansion-panel">
+                            <div class="expansion-header" onclick="toggleExpansion()">
+                                <span><i class="fa-solid fa-brain"></i> AI의 의도 및 생각 알고리즘 보기</span>
+                                <i class="fa-solid fa-chevron-down" id="expansion-arrow"></i>
+                            </div>
+                            <div class="expansion-content" id="expansion-body" style="display: none;">
+                                <pre id="report-thinking-text">분석 데이터가 존재하지 않습니다.</pre>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 로딩 뷰 모형 -->
+                    <div class="report-loading-box" id="report-loading-container" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>NVIDIA Nemotron 모델이 예산과 지출 세부 로그를 기반으로 잔소리를 충전하고 있습니다...</p>
+                    </div>
+                </section>
+
+                <!-- 4. 설정 / 페르소나 탭 -->
+                <section id="tab-setting" class="tab-content">
+                    <!-- 예산 설정 섹션 -->
+                    <div class="card setting-card">
+                        <h4><i class="fa-solid fa-sliders"></i> 이번 달 예산 설정</h4>
+                        <div class="input-group">
+                            <label for="input-target-budget">목표 예산 금액 (원)</label>
+                            <div class="input-with-btn">
+                                <input type="number" id="input-target-budget" placeholder="예: 1000000" min="0">
+                                <button class="btn btn-secondary" onclick="updateTargetBudget()">변경</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 페르소나 선택 카드 섹션 -->
+                    <div class="section-title">AI 코칭 페르소나 성격 선택</div>
+                    <div class="persona-grid">
+                        
+                        <!-- 1. 엄마 -->
+                        <div class="persona-card active" id="persona-MOM" onclick="selectPersona('MOM')">
+                            <div class="persona-emoji">👩‍👦</div>
+                            <div class="persona-info">
+                                <h5>엄마</h5>
+                                <p>따뜻하지만 때로는 뼈 때리는 등짝 스매싱 잔소리</p>
+                            </div>
+                            <div class="check-indicator"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+
+                        <!-- 2. 츤데레 -->
+                        <div class="persona-card" id="persona-TSUNDERE" onclick="selectPersona('TSUNDERE')">
+                            <div class="persona-emoji">😒</div>
+                            <div class="persona-info">
+                                <h5>츤데레</h5>
+                                <p>"흥, 딱히 널 걱정해서 해주는 조언은 아니니까!"</p>
+                            </div>
+                            <div class="check-indicator"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+
+                        <!-- 3. 재테크 코치 -->
+                        <div class="persona-card" id="persona-COACH" onclick="selectPersona('COACH')">
+                            <div class="persona-emoji">📈</div>
+                            <div class="persona-info">
+                                <h5>재테크 코치</h5>
+                                <p>데이터 기반의 차분하고 논리적인 저축 피드백</p>
+                            </div>
+                            <div class="check-indicator"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- 플로팅 액션 버튼 (FAB - 소비 입력용) -->
+            <button class="fab-btn" id="open-input-modal-btn" onclick="openInputModal()">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+
+            <!-- 하단 탭 바 내비게이션 -->
+            <nav class="bottom-nav">
+                <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+                    <i class="fa-solid fa-house"></i>
+                    <span>홈</span>
+                </div>
+                <div class="nav-item" id="nav-history" onclick="switchTab('history')">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>내역</span>
+                </div>
+                <div class="nav-item" id="nav-report" onclick="switchTab('report')">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI코칭</span>
+                </div>
+                <div class="nav-item" id="nav-setting" onclick="switchTab('setting')">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>설정</span>
+                </div>
+            </nav>
+
+        </div> <!-- app-container -->
+
+        <!-- 소비 등록 바텀 시트 모달 (팝업 구조) -->
+        <div class="bottom-sheet-backdrop" id="input-modal-backdrop" onclick="closeInputModal()">
+            <div class="bottom-sheet" id="input-modal-sheet" onclick="event.stopPropagation()">
+                <!-- 모달 상단 조절 바 데코레이션 -->
+                <div class="sheet-handle"></div>
+                
+                <div class="sheet-header">
+                    <h3>수입/지출 빠른 등록</h3>
+                    <i class="fa-solid fa-xmark close-btn" onclick="closeInputModal()"></i>
+                </div>
+
+                <!-- 거래 유형 선택 (수입 vs 지출) -->
+                <div class="transaction-type-selector">
+                    <button class="type-btn active" id="type-btn-expenditure" onclick="selectTransactionType('EXPENDITURE')">지출</button>
+                    <button class="type-btn" id="type-btn-income" onclick="selectTransactionType('INCOME')">수입</button>
+                </div>
+
+                <!-- 금액 노출 화면 -->
+                <div class="amount-display-box">
+                    <span class="unit">₩</span>
+                    <span class="amount-val" id="modal-amount-display">0</span>
+                </div>
+
+                <!-- 원터치 카테고리 칩 선택 -->
+                <div class="sheet-label">카테고리 선택</div>
+                <div class="category-chips-grid" id="category-chips-container">
+                    <!-- 지출 카테고리 칩 목록 -->
+                    <span class="chip-item active" onclick="selectCategory('식비')"><i class="fa-solid fa-utensils"></i> 식비</span>
+                    <span class="chip-item" onclick="selectCategory('카페')"><i class="fa-solid fa-mug-hot"></i> 카페</span>
+                    <span class="chip-item" onclick="selectCategory('교통')"><i class="fa-solid fa-bus"></i> 교통</span>
+                    <span class="chip-item" onclick="selectCategory('쇼핑')"><i class="fa-solid fa-bag-shopping"></i> 쇼핑</span>
+                    <span class="chip-item" onclick="selectCategory('마트')"><i class="fa-solid fa-cart-shopping"></i> 마트</span>
+                    <span class="chip-item" onclick="selectCategory('문화/여가')"><i class="fa-solid fa-film"></i> 여가</span>
+                    <span class="chip-item" onclick="selectCategory('의료/건강')"><i class="fa-solid fa-heart-pulse"></i> 의료</span>
+                    <span class="chip-item" onclick="selectCategory('기타')"><i class="fa-solid fa-ellipsis"></i> 기타</span>
+                </div>
+
+                <!-- 메모 입력란 -->
+                <div class="sheet-label">내용 / 메모</div>
+                <div class="memo-input-box">
+                    <input type="text" id="modal-input-content" placeholder="어디에 쓰셨나요? (예: 서점 책 구매)" value="">
+                </div>
+
+                <!-- 자산(카드/현금) 선택 -->
+                <div class="sheet-label">결제 자산 선택</div>
+                <div class="asset-selector-row">
+                    <button class="asset-btn active" id="asset-btn-card" onclick="selectAsset('신용카드')"><i class="fa-regular fa-credit-card"></i> 카드</button>
+                    <button class="asset-btn" id="asset-btn-cash" onclick="selectAsset('현금/이체')"><i class="fa-solid fa-money-bill-transfer"></i> 현금/계좌</button>
+                </div>
+
+                <!-- 숫자 입력 키패드 -->
+                <div class="number-keypad">
+                    <button onclick="pressKey('1')">1</button>
+                    <button onclick="pressKey('2')">2</button>
+                    <button onclick="pressKey('3')">3</button>
+                    <button onclick="pressKey('4')">4</button>
+                    <button onclick="pressKey('5')">5</button>
+                    <button onclick="pressKey('6')">6</button>
+                    <button onclick="pressKey('7')">7</button>
+                    <button onclick="pressKey('8')">8</button>
+                    <button onclick="pressKey('9')">9</button>
+                    <button onclick="pressKey('clear')">C</button>
+                    <button onclick="pressKey('0')">0</button>
+                    <button onclick="pressKey('backspace')"><i class="fa-solid fa-delete-left"></i></button>
+                </div>
+
+                <!-- 등록 완료 버튼 -->
+                <button class="btn btn-primary submit-transaction-btn" onclick="submitTransaction()">
+                    <i class="fa-solid fa-check"></i> 입력 완료
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JS Logic script -->
+    <script src="/js/app.js"></script>
+</body>
+</html>
