@@ -30,7 +30,7 @@ public class AiReport {
     private LocalDate reportDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "report_type", nullable = false)
+    @Column(name = "report_type")
     private AiReportType reportType;
 
     @Builder
@@ -38,6 +38,6 @@ public class AiReport {
         this.user = user;
         this.content = content;
         this.reportDate = reportDate;
-        this.reportType = reportType;
+        this.reportType = reportType != null ? reportType : AiReportType.DAILY;
     }
 }
