@@ -28,6 +28,9 @@ public class AccountBook {
     @Column(nullable = false)
     private String category;
 
+    @Column(name = "sub_category")
+    private String subCategory;
+
     @Column(nullable = false)
     private String content;
 
@@ -39,18 +42,20 @@ public class AccountBook {
     private TransactionType transactionType;
 
     @Builder
-    public AccountBook(User user, Long amount, String category, String content, LocalDate transactionDate, TransactionType transactionType) {
+    public AccountBook(User user, Long amount, String category, String subCategory, String content, LocalDate transactionDate, TransactionType transactionType) {
         this.user = user;
         this.amount = amount;
         this.category = category;
+        this.subCategory = subCategory;
         this.content = content;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;
     }
 
-    public void update(Long amount, String category, String content, LocalDate transactionDate, TransactionType transactionType) {
+    public void update(Long amount, String category, String subCategory, String content, LocalDate transactionDate, TransactionType transactionType) {
         this.amount = amount;
         this.category = category;
+        this.subCategory = subCategory;
         this.content = content;
         this.transactionDate = transactionDate;
         this.transactionType = transactionType;

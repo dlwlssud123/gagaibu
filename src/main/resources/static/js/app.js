@@ -12,11 +12,32 @@ let currentReportType = 'DAILY'; // DAILY | WEEKLY | MONTHLY
 let modalTransactionType = 'EXPENDITURE'; // EXPENDITURE | INCOME
 let modalAmount = '0';
 let modalCategory = '식비';
+let modalSubCategory = '배달/외식';
 let modalAsset = '신용카드';
 
-// 카테고리 셋 (지출 vs 수입)
-const EXPENDITURE_CATEGORIES = ['식비', '카페', '교통', '쇼핑', '마트', '문화/여가', '의료/건강', '기타'];
-const INCOME_CATEGORIES = ['급여', '부업', '용돈', '기타수입'];
+// 고도화된 계층형 카테고리 데이터 맵
+const CATEGORY_MAP = {
+    EXPENDITURE: {
+        '식비': ['배달/외식', '카페/디저트', '식재료/밀키트'],
+        '마트/편의점': ['편의점', '대형마트'],
+        '교통/차량': ['대중교통(지하철/버스)', '택시', '차량 유지비(기름값/정비)'],
+        '주거/통신': ['월세/관리비', '공과금(전기/가스/수도)', '통신비(휴대폰/인터넷)'],
+        '구독/정기결제': ['OTT/콘텐츠(유튜브 등)', 'IT/생산성 툴(Google 등)'],
+        '패션/미용': ['의류/잡화', '미용실/화장품'],
+        '생활용품': ['가구/가전', '일반 생활잡화(다이소 등)'],
+        '문화/여가': ['문화생활(영화/공연/게임)', '운동/헬스(헬스장 등)', '기타 취미(식물 등)'],
+        '건강/의료': ['병원비', '약국(일반 의약품)'],
+        '여행/숙박': ['국내 여행', '해외 여행(일본 등)'],
+        '교육/자기개발': ['학원/인강(인프런 등)', '도서 구입', '전공/자격증 접수비'],
+        '경조사/선물': ['경조사비(축의금 등)', '지인 선물', '데이트 비용'],
+        '기타': ['기타 지출']
+    },
+    INCOME: {
+        '주수입': ['급여(알바비/월급)'],
+        '부수입': ['용돈', '당근마켓(중고거래)', '금융수익(배당금/이자)'],
+        '기타': ['기타 수입']
+    }
+};
 
 // 초기 로딩
 document.addEventListener('DOMContentLoaded', () => {
@@ -175,6 +196,7 @@ function renderRecentList() {
         const typeClass = isExp ? 'expenditure' : 'income';
         const sign = isExp ? '-' : '+';
         const icon = getCategoryIcon(tx.category);
+        const catLabel = tx.subCategory ? `${tx.category} > ${tx.subCategory}` : tx.category;
 
         const html = `
             <div class="transaction-item">
@@ -422,6 +444,7 @@ function renderTimeline() {
         const typeClass = isExp ? 'expenditure' : 'income';
         const sign = isExp ? '-' : '+';
         const icon = getCategoryIcon(tx.category);
+        const catLabel = tx.subCategory ? `${tx.category} > ${tx.subCategory}` : tx.category;
 
         const html = `
             <div class="transaction-item">
@@ -431,7 +454,7 @@ function renderTimeline() {
                     </div>
                     <div class="tx-info">
                         <span class="tx-content">${tx.content}</span>
-                        <span class="tx-meta">${tx.category}</span>
+                        <span class="tx-meta">${catLabel}</span>
                     </div>
                 </div>
                 <div class="tx-right">
@@ -467,8 +490,13 @@ function openInputModal() {
     // 임시 상태 초기화
     modalAmount = '0';
     modalCategory = '식비';
+    modalSubCategory = '배달/외식';
     modalAsset = '신용카드';
     document.getElementById('modal-input-content').value = '';
+    
+    // 금액 인풋 값 초기화
+    const amountInput = document.getElementById('modal-amount-input');
+    if (amountInput) amountInput.value = '';
     
     // 거래 날짜 기본값을 현재 선택된 날짜로 지정
     const year = selectedDate.getFullYear();
@@ -480,41 +508,45 @@ function openInputModal() {
     // UI 초기 렌더링
     updateModalUI();
     renderCategoryChips();
-
+ 
     // 모달 활성화
     document.getElementById('input-modal-backdrop').classList.add('active');
 }
-
+ 
 function closeInputModal() {
     document.getElementById('input-modal-backdrop').classList.remove('active');
 }
-
+ 
+// 금액 시스템 인풋 입력 감지
+function onAmountInputChange(input) {
+    modalAmount = input.value || '0';
+}
+ 
 // 거래 타입(지출 vs 수입) 변경
 function selectTransactionType(type) {
     modalTransactionType = type;
     
     const expBtn = document.getElementById('type-btn-expenditure');
     const incBtn = document.getElementById('type-btn-income');
-
+ 
     if (type === 'EXPENDITURE') {
         expBtn.classList.add('active');
         incBtn.classList.remove('active');
         modalCategory = '식비'; // 지출 기본값
+        modalSubCategory = '배달/외식';
     } else {
         incBtn.classList.add('active');
         expBtn.classList.remove('active');
-        modalCategory = '급여'; // 수입 기본값
+        modalCategory = '주수입'; // 수입 기본값
+        modalSubCategory = '급여(알바비/월급)';
     }
-
+ 
     updateModalUI();
     renderCategoryChips();
 }
-
+ 
 // 모달 금액 노출 등 UI 동기화
 function updateModalUI() {
-    const display = document.getElementById('modal-amount-display');
-    display.textContent = Number(modalAmount).toLocaleString();
-    
     // 자산 활성화 버튼
     const cardBtn = document.getElementById('asset-btn-card');
     const cashBtn = document.getElementById('asset-btn-cash');
@@ -526,14 +558,17 @@ function updateModalUI() {
         cardBtn.classList.remove('active');
     }
 }
-
+ 
 // 카테고리 칩 선택형 렌더링
 function renderCategoryChips() {
     const container = document.getElementById('category-chips-container');
     container.innerHTML = '';
 
-    const list = modalTransactionType === 'EXPENDITURE' ? EXPENDITURE_CATEGORIES : INCOME_CATEGORIES;
-    list.forEach(cat => {
+    const categoryData = CATEGORY_MAP[modalTransactionType];
+    const mainCategories = Object.keys(categoryData);
+
+    // 1. 대분류 렌더링
+    mainCategories.forEach(cat => {
         const icon = getCategoryIcon(cat);
         const isActive = modalCategory === cat ? 'active' : '';
         const html = `
@@ -543,11 +578,45 @@ function renderCategoryChips() {
         `;
         container.insertAdjacentHTML('beforeend', html);
     });
+
+    // 2. 소분류 렌더링 체이닝
+    renderSubCategoryChips();
+}
+
+// 소분류 카테고리 칩 렌더링
+function renderSubCategoryChips() {
+    const container = document.getElementById('sub-category-chips-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const subList = CATEGORY_MAP[modalTransactionType][modalCategory] || [];
+    
+    // 현재 들고있는 소분류가 하위 카테고리 리스트에 없다면 첫번째로 초기화
+    if (!subList.includes(modalSubCategory)) {
+        modalSubCategory = subList[0] || '';
+    }
+
+    subList.forEach(sub => {
+        const isActive = modalSubCategory === sub ? 'active' : '';
+        const html = `
+            <span class="chip-item sub-chip ${isActive}" onclick="selectSubCategory('${sub}')">
+                ${sub}
+            </span>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    });
 }
 
 function selectCategory(cat) {
     modalCategory = cat;
+    const subList = CATEGORY_MAP[modalTransactionType][modalCategory] || [];
+    modalSubCategory = subList[0] || ''; // 소분류 첫번째 디폴트 지정
     renderCategoryChips();
+}
+
+function selectSubCategory(sub) {
+    modalSubCategory = sub;
+    renderSubCategoryChips();
 }
 
 function selectAsset(asset) {
@@ -555,39 +624,21 @@ function selectAsset(asset) {
     updateModalUI();
 }
 
-// 가상 키패드 클릭 핸들러
+// 가상 키패드 사용 안 하므로 빈 함수 처리
 function pressKey(key) {
-    if (key === 'clear') {
-        modalAmount = '0';
-    } else if (key === 'backspace') {
-        if (modalAmount.length > 1) {
-            modalAmount = modalAmount.slice(0, -1);
-        } else {
-            modalAmount = '0';
-        }
-    } else {
-        if (modalAmount === '0') {
-            modalAmount = key;
-        } else {
-            // 최대 길이 9자리 한계 제한
-            if (modalAmount.length < 9) {
-                modalAmount += key;
-            }
-        }
-    }
-    updateModalUI();
+    // Deprecated
 }
 
 // 거래 등록 API 최종 전송
 async function submitTransaction() {
     const amountVal = parseInt(modalAmount);
-    if (amountVal <= 0) {
+    if (isNaN(amountVal) || amountVal <= 0) {
         alert("금액을 정확히 입력해 주세요.");
         return;
     }
 
     const inputContent = document.getElementById('modal-input-content').value.trim();
-    const finalContent = inputContent !== "" ? inputContent : `${modalCategory} 지출`;
+    const finalContent = inputContent !== "" ? inputContent : `${modalSubCategory}`;
 
     // 모달에 입력된 날짜 값을 가져옴
     const dateStr = document.getElementById('modal-input-date').value;
@@ -596,6 +647,7 @@ async function submitTransaction() {
         userId: USER_ID,
         amount: amountVal,
         category: modalCategory,
+        subCategory: modalSubCategory,
         content: finalContent,
         transactionDate: dateStr,
         transactionType: modalTransactionType
@@ -829,17 +881,22 @@ function isSameDay(d1, d2) {
 function getCategoryIcon(cat) {
     const icons = {
         '식비': 'fa-solid fa-utensils',
-        '카페': 'fa-solid fa-mug-hot',
-        '교통': 'fa-solid fa-bus',
-        '쇼핑': 'fa-solid fa-bag-shopping',
-        '마트': 'fa-solid fa-cart-shopping',
-        '문화/여가': 'fa-solid fa-film',
-        '의료/건강': 'fa-solid fa-heart-pulse',
+        '마트/편의점': 'fa-solid fa-store',
+        '교통/차량': 'fa-solid fa-car-side',
+        '주거/통신': 'fa-solid fa-house-chimney',
+        '구독/정기결제': 'fa-solid fa-rectangle-list',
+        '패션/미용': 'fa-solid fa-shirt',
+        '생활용품': 'fa-solid fa-basket-shopping',
+        '문화/여가': 'fa-solid fa-gamepad',
+        '건강/의료': 'fa-solid fa-briefcase-medical',
+        '여행/숙박': 'fa-solid fa-plane',
+        '교육/자기개발': 'fa-solid fa-graduation-cap',
+        '경조사/선물': 'fa-solid fa-gift',
         '기타': 'fa-solid fa-ellipsis',
+        '주수입': 'fa-solid fa-wallet',
+        '부수입': 'fa-solid fa-hand-holding-dollar',
         '급여': 'fa-solid fa-wallet',
-        '부업': 'fa-solid fa-briefcase',
-        '용돈': 'fa-solid fa-hand-holding-dollar',
-        '기타수입': 'fa-solid fa-sack-dollar'
+        '용돈': 'fa-solid fa-hand-holding-dollar'
     };
     return icons[cat] || 'fa-solid fa-receipt';
 }

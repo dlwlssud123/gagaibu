@@ -55,7 +55,12 @@ public class AiReportService {
                 .sum();
 
         String detailLogs = history.stream()
-                .map(item -> String.format("[%s] %s: %d원 (%s)", item.getTransactionDate(), item.getCategory(), item.getAmount(), item.getContent()))
+                .map(item -> String.format("[%s] %s > %s: %d원 (%s)", 
+                        item.getTransactionDate(), 
+                        item.getCategory(), 
+                        item.getSubCategory() != null ? item.getSubCategory() : "기타", 
+                        item.getAmount(), 
+                        item.getContent()))
                 .collect(Collectors.joining("\n"));
 
         // 예산 정보 가져오기 (없으면 0원)

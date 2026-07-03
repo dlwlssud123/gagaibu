@@ -30,6 +30,7 @@ public class AccountBookService {
                 .user(user)
                 .amount(request.getAmount())
                 .category(request.getCategory())
+                .subCategory(request.getSubCategory())
                 .content(request.getContent())
                 .transactionDate(request.getTransactionDate())
                 .transactionType(request.getTransactionType())
@@ -54,6 +55,7 @@ public class AccountBookService {
         accountBook.update(
                 request.getAmount(),
                 request.getCategory(),
+                request.getSubCategory(),
                 request.getContent(),
                 request.getTransactionDate(),
                 request.getTransactionType()

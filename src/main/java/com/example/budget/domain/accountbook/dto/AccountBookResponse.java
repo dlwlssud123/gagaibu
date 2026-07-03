@@ -11,6 +11,7 @@ public class AccountBookResponse {
     private final Long userId;
     private final Long amount;
     private final String category;
+    private final String subCategory;
     private final String content;
     private final LocalDate transactionDate;
     private final TransactionType transactionType;
@@ -20,6 +21,7 @@ public class AccountBookResponse {
         this.userId = accountBook.getUser().getId();
         this.amount = accountBook.getAmount();
         this.category = accountBook.getCategory();
+        this.subCategory = accountBook.getSubCategory();
         this.content = accountBook.getContent();
         this.transactionDate = accountBook.getTransactionDate();
         this.transactionType = accountBook.getTransactionType();

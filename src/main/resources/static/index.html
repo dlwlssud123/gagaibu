@@ -83,8 +83,11 @@
                                 <option value="OVERSPEND">과소비 (3만원↑)</option>
                                 <option value="INCOME">수입만</option>
                                 <option value="CAT_식비">식비만</option>
-                                <option value="CAT_카페">카페만</option>
-                                <option value="CAT_쇼핑">쇼핑만</option>
+                                <option value="CAT_마트/편의점">마트/편의점만</option>
+                                <option value="CAT_교통/차량">교통/차량만</option>
+                                <option value="CAT_주거/통신">주거/통신만</option>
+                                <option value="CAT_구독/정기결제">구독만</option>
+                                <option value="CAT_문화/여가">문화/여가만</option>
                             </select>
                         </div>
                         <span class="see-all" onclick="switchTab('history')">더보기 <i class="fa-solid fa-chevron-right"></i></span>
@@ -280,21 +283,18 @@
                 <!-- 금액 노출 화면 -->
                 <div class="amount-display-box">
                     <span class="unit">₩</span>
-                    <span class="amount-val" id="modal-amount-display">0</span>
+                    <input type="number" id="modal-amount-input" class="amount-val-input" placeholder="0" min="0" inputmode="numeric" oninput="onAmountInputChange(this)">
                 </div>
 
                 <!-- 원터치 카테고리 칩 선택 -->
-                <div class="sheet-label">카테고리 선택</div>
+                <div class="sheet-label">대분류 선택</div>
                 <div class="category-chips-grid" id="category-chips-container">
-                    <!-- 지출 카테고리 칩 목록 -->
-                    <span class="chip-item active" onclick="selectCategory('식비')"><i class="fa-solid fa-utensils"></i> 식비</span>
-                    <span class="chip-item" onclick="selectCategory('카페')"><i class="fa-solid fa-mug-hot"></i> 카페</span>
-                    <span class="chip-item" onclick="selectCategory('교통')"><i class="fa-solid fa-bus"></i> 교통</span>
-                    <span class="chip-item" onclick="selectCategory('쇼핑')"><i class="fa-solid fa-bag-shopping"></i> 쇼핑</span>
-                    <span class="chip-item" onclick="selectCategory('마트')"><i class="fa-solid fa-cart-shopping"></i> 마트</span>
-                    <span class="chip-item" onclick="selectCategory('문화/여가')"><i class="fa-solid fa-film"></i> 여가</span>
-                    <span class="chip-item" onclick="selectCategory('의료/건강')"><i class="fa-solid fa-heart-pulse"></i> 의료</span>
-                    <span class="chip-item" onclick="selectCategory('기타')"><i class="fa-solid fa-ellipsis"></i> 기타</span>
+                    <!-- 대분류 칩 목록 -->
+                </div>
+
+                <div class="sheet-label" style="margin-top: 12px;">소분류 선택</div>
+                <div class="category-chips-grid sub-category" id="sub-category-chips-container">
+                    <!-- 소분류 칩 목록 -->
                 </div>
 
                 <!-- 메모 입력란 -->
@@ -314,22 +314,6 @@
                 <div class="asset-selector-row">
                     <button class="asset-btn active" id="asset-btn-card" onclick="selectAsset('신용카드')"><i class="fa-regular fa-credit-card"></i> 카드</button>
                     <button class="asset-btn" id="asset-btn-cash" onclick="selectAsset('현금/이체')"><i class="fa-solid fa-money-bill-transfer"></i> 현금/계좌</button>
-                </div>
-
-                <!-- 숫자 입력 키패드 -->
-                <div class="number-keypad">
-                    <button onclick="pressKey('1')">1</button>
-                    <button onclick="pressKey('2')">2</button>
-                    <button onclick="pressKey('3')">3</button>
-                    <button onclick="pressKey('4')">4</button>
-                    <button onclick="pressKey('5')">5</button>
-                    <button onclick="pressKey('6')">6</button>
-                    <button onclick="pressKey('7')">7</button>
-                    <button onclick="pressKey('8')">8</button>
-                    <button onclick="pressKey('9')">9</button>
-                    <button onclick="pressKey('clear')">C</button>
-                    <button onclick="pressKey('0')">0</button>
-                    <button onclick="pressKey('backspace')"><i class="fa-solid fa-delete-left"></i></button>
                 </div>
 
                 <!-- 등록 완료 버튼 -->

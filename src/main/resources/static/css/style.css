@@ -919,15 +919,20 @@ body {
     color: #adb5bd;
 }
 
-.amount-display-box .amount-val {
+.amount-display-box .amount-val-input {
     font-family: 'Outfit', sans-serif;
     font-size: 26px;
     font-weight: 800;
     color: #ef4444;
     letter-spacing: 0.5px;
+    border: none;
+    background: transparent;
+    text-align: right;
+    width: 100%;
+    outline: none;
 }
 
-#type-btn-income.active ~ .amount-display-box .amount-val {
+#type-btn-income.active ~ .amount-display-box .amount-val-input {
     color: #3b82f6;
 }
 
@@ -1111,4 +1116,42 @@ body {
     border-color: #10b981;
 }
 
+/* 소분류 카테고리 스타일 */
+.category-chips-grid.sub-category {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
 
+.chip-item.sub-chip {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    background-color: #f1f3f5;
+    border: 1px solid #e9ecef;
+}
+
+.chip-item.sub-chip.active {
+    font-weight: 700;
+}
+
+/* 지출 소분류 활성화 시 */
+.type-btn.active ~ * .chip-item.sub-chip.active,
+#type-btn-expenditure.active ~ * .chip-item.sub-chip.active,
+.transaction-type-selector:has(#type-btn-expenditure.active) ~ * .chip-item.sub-chip.active {
+    background-color: #ffe3e3;
+    border-color: #ffc9c9;
+    color: #e03131;
+}
+
+/* 수입 소분류 활성화 시 */
+#type-btn-income.active ~ * .chip-item.sub-chip.active,
+.transaction-type-selector:has(#type-btn-income.active) ~ * .chip-item.sub-chip.active {
+    background-color: #e7f5ff;
+    border-color: #a5d8ff;
+    color: #1c7ed6;
+}
