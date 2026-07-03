@@ -11,6 +11,8 @@ public interface AccountBookRepository extends JpaRepository<AccountBook, Long> 
 
     List<AccountBook> findByUserIdAndTransactionDateBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
+    long countByUserId(Long userId);
+
     @Query("SELECT a.category, SUM(a.amount) FROM AccountBook a " +
            "WHERE a.user.id = :userId AND a.transactionDate BETWEEN :startDate AND :endDate " +
            "GROUP BY a.category")
